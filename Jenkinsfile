@@ -15,7 +15,7 @@ pipeline{
 	success{
 	  slackSend (
 		channel:'#all-spsnet-internee',
-		color: 'danger'
+		color: 'danger',
 message: "Failed: Job ${env.JOB_NAME}'
 )
 }
