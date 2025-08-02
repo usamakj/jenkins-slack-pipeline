@@ -10,15 +10,24 @@ pipeline {
     }
 
     post {
-        // Yeh block hamesha chalega, chahe build success ho ya fail
         always {
-            slackSend (
-                channel: '#all-spsnet-internee', 
-                color: 'good', 
-                message: "TEST: Job '${env.JOB_NAME}' build #${env.BUILD_NUMBER}. Status: ${currentBuild.currentResult}",
-                tokenCredentialId: 'slack-webhook-url',
-                botUser: true
-            )
+            script {
+                try {
+                    slackSend (
+                        channel: '#all-spsnet-internee',
+                        color: currentBuild.currentResult == 'SUCCESS' ? 'good' : 'danger',
+                        message: """:jenkins: Job `${env.JOB_NAME}` 
+Build #${env.BUILD_NUMBER} 
+Status: ${currentBuild.currentResult}
+URL: ${env.BUILD_URL}""",
+                        tokenCredentialId: 'slack-webhook-url',
+                        botUser: true,
+                        failOnError: true
+                    )
+                } catch (Exception e) {
+                    echo "Slack notification failed: ${e.getMessage()}"
+                }
+            }
         }
     }
 }
