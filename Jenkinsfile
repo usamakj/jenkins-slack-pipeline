@@ -12,14 +12,14 @@ pipeline {
     post {
         success {
             slackSend (
-                channel: '#general', 
+                channel: '#all-spsnet-internee', 
                 color: 'good', 
                 message: "SUCCESSFUL: Job ${env.JOB_NAME} build #${env.BUILD_NUMBER}. Check results: ${env.BUILD_URL}"
             )
         }
         failure {
             slackSend (
-                channel: '#general', 
+                channel: '#all-sps-internee', 
                 color: 'danger', 
                 message: "FAILED: Job ${env.JOB_NAME} build #${env.BUILD_NUMBER}. Check console: ${env.BUILD_URL}"
             )
