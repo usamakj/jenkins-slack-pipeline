@@ -1,35 +1,65 @@
+
+
 pipeline {
-    agent any
 
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Build stage is running...'
-            }
-        }
-    }
+    agent any
 
-    post {
-        success {
-            // Jenkins ko batayen ke konsa credential istemal karna hai
-            withCredentials([string(credentialsId: 'slack-webhook-url', variable: 'SLACK_WEBHOOK_URL')]) {
-                slackSend (
-                    webhookUrl: env.SLACK_WEBHOOK_URL,
-                    channel: '#general', 
-                    color: 'good', 
-                    message: "SUCCESSFUL: Job ${env.JOB_NAME} build #${env.BUILD_NUMBER}. Check results: ${env.BUILD_URL}"
-                )
-            }
-        }
-        failure {
-            withCredentials([string(credentialsId: 'slack-webhook-url', variable: 'SLACK_WEBHOOK_URL')]) {
-                slackSend (
-                    webhookUrl: env.SLACK_WEBHOOK_URL,
-                    channel: '#general', 
-                    color: 'danger', 
-                    message: "FAILED: Job ${env.JOB_NAME} build #${env.BUILD_NUMBER}. Check console: ${env.BUILD_URL}"
-                )
-            }
-        }
-    }
+
+
+    stages {
+
+        stage('Build') {
+
+            steps {
+
+                echo 'Build stage is running...'
+
+            }
+
+        }
+
+    }
+
+
+
+    post {
+
+        success {
+
+            slackSend (
+
+                channel: '#all-spsnet-internee', 
+
+                color: 'good', 
+
+                message: "SUCCESSFUL: Job ${env.JOB_NAME} build #${env.BUILD_NUMBER}. Check results: ${env.BUILD_URL}",
+
+                tokenCredentialId: 'slack-webhook-url',
+
+                botUser: true
+
+            )
+
+        }
+
+        failure {
+
+            slackSend (
+
+                channel: '#all-spsnet-internee', 
+
+                color: 'danger', 
+
+                message: "FAILED: Job ${env.JOB_NAME} build #${env.BUILD_NUMBER}. Check console: ${env.BUILD_URL}",
+
+                tokenCredentialId: 'slack-webhook-url',
+
+                botUser: true
+
+            )
+
+        }
+
+    }
+
 }
