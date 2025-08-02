@@ -11,18 +11,25 @@ pipeline {
 
     post {
         success {
-            slackSend (
-                channel: '#all-spsnet-internee', 
-                color: 'good', 
-                message: "SUCCESSFUL: Job ${env.JOB_NAME} build #${env.BUILD_NUMBER}. Check results: ${env.BUILD_URL}"
-            )
+            // Jenkins ko batayen ke konsa credential istemal karna hai
+            withCredentials([string(credentialsId: 'slack-webhook-url', variable: 'SLACK_WEBHOOK_URL')]) {
+                slackSend (
+                    webhookUrl: env.SLACK_WEBHOOK_URL,
+                    channel: '#general', 
+                    color: 'good', 
+                    message: "SUCCESSFUL: Job ${env.JOB_NAME} build #${env.BUILD_NUMBER}. Check results: ${env.BUILD_URL}"
+                )
+            }
         }
         failure {
-            slackSend (
-                channel: '#all-sps-internee', 
-                color: 'danger', 
-                message: "FAILED: Job ${env.JOB_NAME} build #${env.BUILD_NUMBER}. Check console: ${env.BUILD_URL}"
-            )
+            withCredentials([string(credentialsId: 'slack-webhook-url', variable: 'SLACK_WEBHOOK_URL')]) {
+                slackSend (
+                    webhookUrl: env.SLACK_WEBHOOK_URL,
+                    channel: '#general', 
+                    color: 'danger', 
+                    message: "FAILED: Job ${env.JOB_NAME} build #${env.BUILD_NUMBER}. Check console: ${env.BUILD_URL}"
+                )
+            }
         }
     }
 }
